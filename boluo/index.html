@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html ng-app>
+<head>
+    <meta charset="utf-8">
+    <title>登录</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="guodandan">
+    <!--必备的Css-->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/css/theme.css" rel="stylesheet">
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/alertify.css" rel="stylesheet">
+    <link href="assets/css/opp-app.css" rel="stylesheet">
+
+    <script type="text/javascript" src="js/common/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="js/cookie.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/jquery.cookie.js" charset="utf-8"></script>
+
+</head>
+<body class="login-back">
+<div id="wrap">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="row-fluid">
+                    <div class="widget container-narrow">
+                        <div class="widget-header">
+                            <i class="icon-user"></i>
+                            <h5>登录 您的账号</h5>
+                        </div>
+                        <div class="widget-body clearfix" style="padding:25px;">
+                            <form>
+                                <div style="padding:10px 0">
+                                    <a href="javascript:" class="btn btn-large btn-block btn-primary"><i
+                                            class="icon-facebook-sign"> </i> 疫情防护系统登录 </a>
+                                </div>
+                                <div class="divider">
+                                    <hr class="pull-left">
+                                    <span>请登录</span>
+                                    <hr class="pull-right">
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls">
+                                        <input name="username" class="btn-block" type="text" id="idcard"
+                                               placeholder="请输入账号">
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls">
+                                        <input name="password" class="btn-block" type="password" id="password"
+                                               placeholder="请输入密码">
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls clearfix">
+                                        <label style="width:auto" class="checkbox pull-left">
+                                            <input type="checkbox" id="isRemember"> 记住我
+                                        </label>
+                                        <a style="padding: 5px 0px 0px 5px;" href="#" class="pull-right"></a>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <button type="submit" class="btn pull-right" id="submit_btn">登录</button>
+                            <button type="submit" class="btn pull-right" id="regiest_btn">注册</button>
+                        </div>
+                    </div>
+                    <div style="text-align:center">
+                        <p>疫情防护系统</p>
+                    </div>
+                </div>
+                <!--/row-fluid-->
+            </div>
+            <!--/span10-->
+        </div>
+        <!--/row-fluid-->
+    </div>
+    <!--/.fluid-container-->
+</div>
+
+</body>
+
+<script>
+    $("#submit_btn").on("click",function(){
+        login();
+    });
+
+    $("#regiest_btn").on("click",function(){
+        register();
+    });
+
+    function login(){
+        var username = $(" input[ name='username' ] ").val();
+        var password = $(" input[ name='password' ] ").val();
+
+        console.log(username);
+        console.log(password);
+
+        $.ajax({
+            url:"user/login",
+            data:{"userName":username,"userPassword":password},
+            type:"post",
+            dataType:"json",
+            success:function(data){
+                if(data.status == 200){
+                    console.log("登录成功!");
+                    window.location = "templates/index.html";
+                }else{
+                    alert("登录失败!");
+                }
+            }
+        });
+    }
+
+    function register() {
+        window.location = "regiest.html";
+    }
+</script>
+</html>

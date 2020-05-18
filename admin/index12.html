@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html ng-app>
+<head>
+    <meta charset="utf-8">
+    <title>个人中心</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="guodandan">
+    <!--必备的Css-->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/css/theme.css" rel="stylesheet">
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/alertify.css" rel="stylesheet">
+    <link href="assets/css/opp-app.css" rel="stylesheet">
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+
+    <script type="text/javascript" src="js/common/jquery-1.11.3.min.js"></script>
+
+</head>
+<body>
+<div id="wrap">
+    <!-- navbar-->
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <div ng-include src="'navbar.html'"></div>
+            </div>
+        </div>
+    </div>
+    <!--/ navbar-->
+    <div class="container-fluid">
+        <!-- Side menu -->
+        <div class="sidebar-nav nav-collapse collapse">
+            <div class="user_side clearfix">
+                <img src="assets/img/odinn.jpg" alt="Odinn god of Thunder">
+                <h5 id="currentuser"></h5>
+                <a href="setting.html"><i class="icon-cog"></i>  个人中心</a>
+            </div>
+            <div ng-include src="'menu.html'"></div>
+        </div>
+        <!-- /Side menu -->
+
+        <!-- Main window -->
+        <div class="main_container" id="forms_page">
+            <div class="row-fluid">
+                <ul class="breadcrumb">
+                    <li><a href="index_admin.html">首页 </a> <span class="divider">/</span></li>
+                    <li class="active">个人中心</li>
+                </ul>
+            </div>
+            <div class="row-fluid">
+                <div class="widget widget-padding span12">
+                    <div class="widget-header">
+                        <i class="icon-list-alt"></i>  <h5>个人信息</h5>
+                        <div class="widget-buttons">
+                            <a href="#" data-title="Collapse" data-collapsed="false" class="tip collapse"><i class="icon-chevron-up"></i>  </a>
+                        </div>
+                    </div>
+                    <div class="widget-body">
+                        <div class="widget-forms clearfix">
+                            <form class="form-horizontal">
+                                <div class="control-group">
+                                    <label class="control-label">用户名</label>
+                                    <div class="controls">
+                                        <!--<input class="span7" id="userid"  type="hidden">-->
+                                        <input class="span7" name="username"  type="text" placeholder="请输入用户名">
+                                        <span class="help-inline red">*</span>
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label">身份证号</label>
+                                    <div class="controls">
+                                        <input class="span7" id="idcard"  type="text"  placeholder="请输入身份证号">
+                                        <span class="help-inline red">*</span>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">密码</label>
+                                    <div class="controls">
+                                        <input class="span7" name="password"  type="password" placeholder="请输入密码">
+                                        <span class="help-inline red">*</span>
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label">性别</label>
+                                    <div class="controls">
+
+                                        <label class="radio">
+                                            <input type="radio" name="sex" id="sex0" value="0" >
+                                            男
+                                        </label>
+                                        <label class="radio">
+                                            <input type="radio" name="sex" id="sex1" value="1">
+                                            女
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">手机号</label>
+                                    <div class="controls">
+                                        <input class="span7" name="phone"  type="text"  placeholder="请输入手机号">
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">邮箱</label>
+                                    <div class="controls">
+                                        <input class="span7" name="email"  type="text"  placeholder="请输入邮箱">
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">地址</label>
+                                    <div class="controls">
+                                        <input class="span7" id="address"  type="text"  placeholder="请输入地址">
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                    <div class="widget-footer">
+                        <input type="submit" onclick="queding()" value="确定"/>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script>
+
+    function queding() {
+
+        var userName=$("form input[name=username]").val();
+        console.log(userName);
+        var userPassword=$("form input[name=password]").val();
+        var userPhone=$("form input[name=phone]").val();
+        var userEmail=$("form input[name=email]").val();
+
+
+        if(userName == null || userName == ""){
+            alert("用户名不能为空！");
+            return;
+        }
+
+        if(userPassword == null || userPassword == ""){
+            alert("密码不能为空！");
+            return;
+        }
+
+        if(userPhone == null || userPhone == ""){
+            alert("电话不能为空！");
+            return;
+        }
+
+        if(userEmail == null || userEmail == ""){
+            alert("邮箱不能为空！");
+            return;
+        }
+
+        $.ajax({
+            url:"http://www.boluo.com/user/save",
+            type:"post",
+            data:{
+                "userName":userName,
+                "userPassword":userPassword,
+                "userPhone":userPhone,
+                "userEmail":userEmail,
+            },
+            dataType:"json",
+            success:function(result){
+                if(result.status==200){
+                    alert("注册成功");
+                    window.location.href="./index2.html";
+                }else{
+                    alert("注册失败!");
+                }
+            },
+            error:function(){
+                alert("请求失败！");
+            }
+        });
+    }
+
+</script>
+</html>

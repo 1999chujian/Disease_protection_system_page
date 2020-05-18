@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="Keywords" content="疫情防护">
+  <meta name="Description" content="疫情防护">
+
+  <link rel="stylesheet" type="text/css" href="index11_files/animals_pc.css"/>
+  <link rel="stylesheet" type="text/css" href="index11_files/cropper.min.css"/>
+  <link rel="stylesheet" type="text/css" href="index11_files/ImgCropping.css"/>
+
+  <script type="text/javascript" src="js/common/jquery-1.11.3.min.js"></script>
+  <script type="text/javascript" src="js/cookie.js" charset="utf-8"></script>
+  <script type="text/javascript" src="js/jquery.cookie.js" charset="utf-8"></script>
+
+  <title>申请成为志愿者</title>
+  <style type="text/css">
+    .clear{clear: left;}
+    .d_sel select{width: 49%;}
+    .d_sel .select_down{background-size: 12%;}
+    .d_sel select:first-child{margin-right: 2%;}
+    .list_tit{width: 100%;}
+    .list_tit input{width: 99% !important;padding-left: 1% !important;}
+    .list_cont{width: 100%;margin-left: 0 !important;}
+    .list_cont textarea{width: 98%;height: 100px;padding: 10px 1%;}
+    .change_s{color: #181818;}
+
+    .sub_btn input{background: #0BAE11;}
+  </style>
+
+
+  <script>
+
+    window.onload=function(){
+
+      var userId = $.cookie("USER_ID");
+
+      $.ajax({
+        url:"http://www.boluo.com/user/fangzhi",
+        type:"post",
+        data:{
+          "userId":userId
+        },
+        dataType:"json",
+        success:function(data){
+          if(data!=1){
+            alert("您不能重复申请成为志愿者！");
+            window.location.href="index.html";
+          }
+
+        },
+        error:function(){
+          alert("请求失败！");
+        }
+      });
+
+    }
+
+
+    function submitForm(){
+
+      var userId = $.cookie("USER_ID");
+
+      var volunteerName=$("form input[name=volunteerName]").val();
+      var volunteerImage=$("form input[name=volunteerImage]").val();
+      var volunteerGender=$("form select[name=volunteerGender]").val();
+      var volunteerPhone=$("form input[name=volunteerPhone]").val();
+      var volunteerAddress=$("form input[name=volunteerAddress]").val();
+      var volunteerHealth=$("form input[name=volunteerHealth]").val();
+      var volunteerAge=$("form input[name=volunteerAge]").val();
+
+      if(volunteerName == null || volunteerName == ""){
+        alert("姓名不能为空！");
+        return;
+      }
+
+      if(volunteerGender == null || volunteerGender == ""){
+        alert("性别不能为空！");
+        return;
+      }
+
+      if(volunteerAge == null || volunteerAge == ""){
+        alert("年龄不能为空！");
+        return;
+      }
+
+      if(volunteerAddress == null || volunteerAddress == ""){
+        alert("家庭住址不能为空！");
+        return;
+      }
+
+      if(volunteerPhone == null || volunteerPhone == ""){
+        alert("联系电话不能为空！");
+        return;
+      }
+
+      if(volunteerHealth == null || volunteerHealth == ""){
+        alert("身体状况不能为空！");
+        return;
+      }
+
+      if(volunteerImage == null || volunteerImage == ""){
+        alert("未上传图片！");
+        return;
+      }
+
+
+      $.ajax({
+        url:"http://www.boluo.com/user/insert/volunteer",
+        type:"post",
+        data:{
+          "userId":userId,
+          "volunteerName":volunteerName,
+          "volunteerGender":volunteerGender,
+          "volunteerAge":volunteerAge,
+          "volunteerAddress":volunteerAddress,
+          "volunteerPhone":volunteerPhone,
+          "volunteerImage":volunteerImage,
+          "volunteerHealth":volunteerHealth
+        },
+        dataType:"json",
+        success:function(data){
+          if(data.status==200){
+            alert("申请防疫物资信息成功");
+          }else{
+            alert("申请防疫物资信息失败");
+          }
+        },
+        error:function(){
+          alert("请求失败！");
+        }
+      });
+    }
+
+    /* 本地上传 */
+    function getFileUrl(sourceId) {
+      var url;
+      if (navigator.userAgent.indexOf("MSIE") >= 1) { // IE
+        url = document.getElementById(sourceId).value;
+      } else if (navigator.userAgent.indexOf("Firefox") > 0) { // Firefox
+        url = window.URL.createObjectURL(document.getElementById(sourceId).files.item(0));
+      } else if (navigator.userAgent.indexOf("Chrome") > 0) { // Chrome
+        url = window.URL.createObjectURL(document.getElementById(sourceId).files.item(0));
+      }
+      return url;
+    }
+
+    function changeImg() {
+
+      var formData = new FormData();
+      formData.append("pic", document.getElementById("imgOne").files[0]);
+      console.log(document.getElementById("imgOne").files[0]);
+      console.log(formData.values());
+      console.log(formData);
+      $.ajax({
+        type: "POST", // 数据提交类型
+        url: "http://www.boluo.com/img/uploadImg", // 发送地址
+        data: formData, //发送数据
+        async: true, // 是否异步
+        processData: false, //processData 默认为false，当设置为true的时候,jquery ajax 提交的时候不会序列化 data，而是直接使用data
+        contentType: false, //
+        success:function (data) {
+          console.log(data);
+          if(data.error==0){
+            //alert(data.error);
+            document.getElementById("imgInput").value=data.url;
+            document.getElementById("photo").src=data.url;
+          }else {
+            console.log("失败");
+          }
+        },
+        error:function(){
+          alert("请求失败!");
+        }
+      });
+    }
+
+  </script>
+
+</head>
+<body>
+<div id="top"></div>
+<div class="entry">
+  <div class="entry_list">
+    <h3>申请成为志愿者</h3>
+    <p>众志成城,抗击疫情,感谢你贡献自己的一份力量</p>
+    <form action="javaScript:void(0)" method="post" id="itemAddForm" class="resource">
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i>姓名</label>
+        <input type="text" name="volunteerName" value="" required="required" placeholder="请输入姓名" maxlength="11"/>
+      </div>
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i>性别</label>
+        <select name="volunteerGender" class="sel_btn select_down">
+          <option value="男">男</option>
+          <option value="女">女</option>
+        </select>
+      </div>
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i>年龄</label>
+        <input type="text" name="volunteerAge" value="" required="required" placeholder="请输入年龄" maxlength="11"/>
+      </div>
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i>家庭住址</label>
+        <input type="text" name="volunteerAddress" id="" value="" required="required" placeholder="请输入家庭住址" maxlength="25"/>
+      </div>
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i>联系电话</label>
+        <input type="text" name="volunteerPhone" value="" required="required" placeholder="请输入联系电话" maxlength="11"/>
+      </div>
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i>紧急联系人电话</label>
+        <input type="text" name="givePhone" value="" required="required" placeholder="请输入紧急联系人电话" maxlength="11"/>
+      </div>
+      <div class="list_inp list_tit">
+        <label for=""><i class="col_g">*</i>身体状况</label>
+        <input type="text" name="volunteerHealth" value="" required="required" placeholder="请输入身体状况" max=""/>
+      </div>
+      <div class="list_inp list_cont">
+        <label for=""><i class="col_g">*</i>备注信息</label>
+        <textarea name="animalInfo" required="required" rows="" cols="" placeholder="请输入详细内容"></textarea>
+      </div>
+      <div class="list_inp list_tit">
+        <label for=""><i class="col_g">*</i>上传身份证图片</label>
+        <input type="text" name="volunteerImage" id="imgInput" required="required" placeholder="点击下方的选择文件,图片地址会自动添加到该处" max=""/>
+
+      </div>
+      <div class="clear"></div>
+      <div class="sub_btn">
+        <input type="submit" class="sub" value="提交" onclick="submitForm()">
+      </div>
+    </form>
+
+    <img id="photo" src="css/img/shangchuanBg.png" width="109px" height="109px" style="display: block;"/>
+    <form id="form1" action="" method="post" enctype="multipart/form-data">
+      <input type="file" name="imgOneName" id="imgOne"
+             onchange="changeImg()"/>
+    </form>
+  </div>
+</div>
+<div id="nav_r"></div>
+<div id="bottom"></div>
+
+<div class="success" style="display: none;">
+  <div class="success1">
+    <span></span>
+  </div>
+</div>
+</body>
+
+</html>

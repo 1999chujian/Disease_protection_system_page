@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="_fragments :: head(~{::title})">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>疫情防控</title>
+
+	<link rel="stylesheet" type="text/css" href="css/animals_pc/animals_pc.css"/>
+	<!--<link rel="stylesheet" type="text/css" href="static/css/dwzj.css">-->
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css" >
+	<link rel="stylesheet" href="../static/css/me.css" >
+
+	<script type="text/javascript" src="js/common/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="js/cookie.js" charset="utf-8"></script>
+	<script type="text/javascript" src="js/jquery.cookie.js" charset="utf-8"></script>
+
+	<script type="text/javascript">
+		var userId="";	//用户ID
+		var loseId="";	//文章ID
+
+		window.onload=function(){
+
+			var localUrl=decodeURI(window.location.href);
+
+			loseId = localUrl.split("?")[1].split("=")[1];
+			console.log(loseId);
+
+			$.ajax({
+				url:"http://www.boluo.com/user/wenzhang1/"+loseId,
+				dataType:"json",
+				type:"POST",
+				success:function(data){
+					console.log("ajax成功!");
+					//图片
+					var imgUrl=data.wenzhangImg;
+					//console.log(imgUrl);
+
+					document.getElementById("lose_img").src=imgUrl;
+					document.getElementById("lose_title").innerText=data.wenzhangTitle;
+					document.getElementById("lose_info").innerText=data.userName;
+					document.getElementById("wenzhang_info").innerText=data.wenzhangInfo;
+
+				}
+			});
+
+			userId = $.cookie("USER_ID");
+
+			$.ajax({
+				url:"http://www.boluo.com/user/chakanliuyan?page=1&rows=10000&wenzhangId="+loseId,
+				dataType:"json",
+				type:"POST",
+				success:function(data){
+
+					if(data.rows.length>0){
+
+						$.each(data.rows,function(index, user){
+
+							$("#outlook").append("<li>"+user.userName+"  :  "+user.leaveMessage+"</li><br>");
+						});
+
+					}
+				}
+			});
+
+		}
+
+		function leaveMessage() {
+
+			var localUrl=decodeURI(window.location.href);
+			loseId = localUrl.split("?")[1].split("=")[1];
+
+			var message = $("#text11").val();
+			var userName = $.cookie("USER_NAME");
+
+			$.ajax({
+				url:"http://www.boluo.com/user/liuyan",
+				dataType:"json",
+				type:"POST",
+				data:{
+					"wenzhangId":loseId,
+					"leaveMessage":message,
+					"userName":userName
+				},
+				success:function (data) {
+					if(data.status==200){
+						location.reload();
+					}else {
+						alert("留言失败!");
+					}
+				},
+				error:function () {
+					alert("页面错误!");
+				}
+			});
+		}
+
+	</script>
+
+</head>
+<body>
+
+<!--导航-->
+<nav th:replace="_fragments :: menu(1)" class="ui inverted attached segment m-padded-tb-mini m-shadow-small" >
+	<div class="ui container">
+		<div class="ui inverted secondary stackable menu">
+			<h2 class="ui teal header item">疫情防控</h2>
+			<a href="index.html" class=" m-item item m-mobile-hide"><i class="mini home icon"></i>首页</a>
+			<a href="index1.html" class="m-item item m-mobile-hide"><i class="mini idea icon"></i>患者人数</a>
+			<a href="index2.html" class="m-item item m-mobile-hide"><i class="mini clone icon"></i>防疫物资</a>
+			<a href="index4.html" class="m-item item m-mobile-hide"><i class="mini tags icon"></i>成为志愿者</a>
+			<a href="about.html" class="m-item item m-mobile-hide"><i class="mini info icon"></i>关于新冠状病毒</a>
+
+			<li class='m-item item m-mobile-hide' id="regist" ><a href="regist.html"></a></li>
+			<li class='m-item item m-mobile-hide' id="loginbar"><a href="login.html"></a></li>
+
+		</div>
+	</div>
+	<a href="#" class="ui menu toggle black icon button m-right-top m-mobile-show">
+		<i class="sidebar icon"></i>
+	</a>
+</nav>
+
+<!--中间内容-->
+<div  class="m-container m-padded-tb-big animated fadeIn">
+	<div class="ui container">
+		<div class="ui stackable grid">
+			<!--左边网站列表-->
+			<div class="eleven wide column">
+
+				<section>
+					<!--<div id="top"></div>-->
+					<br/>
+					<br/>
+					<br/>
+					<div >	<!-- class="details"-->
+						<div class="nav_tit">
+							<h3>文章详情</h3>
+							<span>抗击疫情,我们在行动</span>
+						</div>
+						<div >	<!--class="dock_left"-->
+							<div class="dock_left_top">
+								<div class="det_l_img">
+									<img src="" id="lose_img"/>
+								</div>
+								<div class="det_r_cont">
+									<h3 id="lose_title">data.loseTitle</h3>
+									<span class="tit_det col_g change_s"></span>
+									<span class="det_r_c" id="lose_info">data.loseInfo</span>
+									<span class="det_r_c" id="wenzhang_info">data.loseInfo</span>
+									<!--<span class="time">时间：<span id="lose_create_time">data.loseCreateTime</span></span>
+									<span class="area">地点：<span id="lose_address">data.loseAddress</span></span>
+									<span class="phone">电话：<span id="lose_phone">data.losePhone</span></span>-->
+
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<textarea name="text2" id="text11" placeholder="留言内容" style="width: 350px; height: 50px;"></textarea>
+
+									<input type="button" value="留言" onclick="leaveMessage()"/>
+									<!--<span class="col_bg l_btn">我要留言</span>-->
+								</div>
+								<div class="leaving dis_none">
+									<form action="" method="post">
+										<textarea name="" rows="" cols="" placeholder="留言内容"></textarea>
+										<span class="reply_btn">确认回复</span>
+									</form>
+								</div>
+							</div>
+							<div class="dialogue">
+								<div class="nav_tit">
+									<h3>聊天动态</h3>
+									<span>可在下方对该条资源信息留言交流</span>
+
+								</div>
+								<div class="chat">
+									<ul class="res_chat" id="outlook">
+
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div id="right"></div>
+					</div>
+					<div id="nav_r"></div>
+					<div id="bottom"></div>
+				</section>
+
+				<!--footer-->
+				<div class="ui bottom attached segment" th:if="${page.totalPages}>1">
+
+				</div>
+
+			</div>
+
+			<!--右边的top-->
+			<div class="five wide column">
+
+				<!--分类-->
+				<div class="ui segments">
+					<div class="ui secondary segment">
+						<div class="ui two column grid">
+							<div class="column">
+								<i class="idea icon"></i>分类
+							</div>
+							<div class="right aligned column">
+								<a href="#" th:href="@{types/-1}" target="_blank">more <i class="angle double right icon"></i></a>
+							</div>
+						</div>
+					</div>
+					<div class="ui teal segment">
+						<div class="ui fluid vertical menu" >
+							<a href="#" th:href="@{/types/{id}(id=${type.id})}" target="_blank" class="item"  th:each="type : ${types}">
+								<span th:text="${type.name}"></span>
+								<div class="ui teal basic left pointing label" th:text="${#arrays.length(type.blogs)}"></div>
+							</a>
+							<!--/*-->
+
+							<!--*/-->
+						</div>
+					</div>
+				</div>
+
+				<!--标签-->
+				<div class="ui segments m-margin-top-large">
+					<div class="ui secondary segment">
+						<div class="ui two column grid">
+							<div class="column">
+								<i class="tags icon"></i>标签
+							</div>
+							<div class="right aligned column">
+								<a href="#" th:href="@{tags/-1}" target="_blank">more <i class="angle double right icon"></i></a>
+							</div>
+						</div>
+					</div>
+					<div class="ui teal segment">
+
+						<!--/*-->
+						<a href="#" target="_blank" class="ui teal basic left pointing label m-margin-tb-tiny">
+							 众志成城<div class="detail"></div>
+						</a>
+						<a href="#" target="_blank" class="ui teal basic left pointing label m-margin-tb-tiny">
+							 不造谣<div class="detail"></div>
+						</a>
+						<a href="#" target="_blank" class="ui teal basic left pointing label m-margin-tb-tiny">
+							 居家<div class="detail"></div>
+						</a>
+
+						<!--*/-->
+					</div>
+				</div>
+
+				<!--最新推荐-->
+				<div class="ui segments m-margin-top-large">
+					<div class="ui secondary segment ">
+						<i class="bookmark icon"></i>最新推荐
+					</div>
+					<div class="ui segment" th:each="blog : ${recommendBlogs}">
+						<a href="#" th:href="@{/blog/{id}(id=${blog.id})}" target="_blank" class="m-black m-text-thin" th:text="${blog.title}">钟南山</a>
+					</div>
+					<!--/*-->
+					<div class="ui segment" >
+						<a href="#" target="_blank" class="m-black m-text-thin">李兰娟</a>
+					</div>
+
+					<!--*/-->
+				</div>
+
+				<!--二维码-->
+				<h4 class="ui horizontal divider header m-margin-top-large">扫码关注公众号</h4>
+				<div class="ui centered card" style="width: 11em">
+					<img src="../static/images/wechat.png" th:src="@{/images/wechat.png}" alt="" class="ui rounded image" >
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+</div>
+
+<br>
+<br>
+<!--底部footer-->
+<footer th:replace="_fragments :: footer" class="ui inverted vertical segment m-padded-tb-massive">
+	<div class="ui center aligned container">
+		<div class="ui inverted divided stackable grid">
+			<div class="three wide column">
+				<div class="ui inverted link list">
+					<div class="item">
+						<img src="../static/images/wechat.jpg" th:src="@{/images/wechat.jpg}"  class="ui rounded image" alt="" style="width: 110px">
+					</div>
+				</div>
+			</div>
+			<div class="three wide column">
+				<h4 class="ui inverted header m-text-thin m-text-spaced " >感人事迹</h4>
+				<div class="ui inverted link list">
+					<a href="#" class="item m-text-thin">......</a>
+					<a href="#" class="item m-text-thin">......</a>
+					<a href="#" class="item m-text-thin">......</a>
+				</div>
+			</div>
+			<div class="three wide column">
+				<h4 class="ui inverted header m-text-thin m-text-spaced ">联系管理员</h4>
+				<div class="ui inverted link list">
+					<a href="#" class="item m-text-thin">Email：1023304783@qq.com</a>
+					<a href="#" class="item m-text-thin">QQ：1023304783</a>
+				</div>
+			</div>
+			<div class="seven wide column">
+				<h4 class="ui inverted header m-text-thin m-text-spaced ">疫情防控</h4>
+				<p class="m-text-thin m-text-spaced m-opacity-mini">。。</p>
+			</div>
+		</div>
+		<div class="ui inverted section divider"></div>
+		<p class="m-text-thin m-text-spaced m-opacity-tiny">Copyright © 2020 - 2020 Designed by Tanjunfu</p>
+	</div>
+
+</footer>
+</body>
+</html>

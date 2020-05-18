@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="Keywords" content="疫情防护">
+  <meta name="Description" content="疫情防护">
+
+  <link rel="stylesheet" type="text/css" href="index11_files/animals_pc.css"/>
+  <link rel="stylesheet" type="text/css" href="index11_files/cropper.min.css"/>
+  <link rel="stylesheet" type="text/css" href="index11_files/ImgCropping.css"/>
+
+  <script type="text/javascript" src="js/common/jquery-1.11.3.min.js"></script>
+
+  <title>修改患者人数</title>
+  <style type="text/css">
+    .clear{clear: left;}
+    .d_sel select{width: 49%;}
+    .d_sel .select_down{background-size: 12%;}
+    .d_sel select:first-child{margin-right: 2%;}
+    .list_tit{width: 100%;}
+    .list_tit input{width: 99% !important;padding-left: 1% !important;}
+    .list_cont{width: 100%;margin-left: 0 !important;}
+    .list_cont textarea{width: 98%;height: 100px;padding: 10px 1%;}
+    .change_s{color: #181818;}
+
+    .sub_btn input{background: #0BAE11;}
+  </style>
+
+
+  <script>
+
+    function submitForm(){
+
+      var diqu = $("form select[name=diqu]").val();
+      var xianyou = $("form input[name=xianyou]").val();
+      var leiji = $("form input[name=leiji]").val();
+      var bijiao = $("form input[name=bijiao]").val();
+      var live = $("form input[name=live]").val();
+      var death = $("form input[name=death]").val();
+
+
+      $.ajax({
+        url:"http://admin.boluo.com/admin/xiugaihuanzhe",
+        type:"post",
+        data:{
+          "diqu":diqu,
+          "xianyou":xianyou,
+          "leiji":leiji,
+          "bijiao":bijiao,
+          "live":live,
+          "death":death
+        },
+        dataType:"json",
+        success:function(data){
+          if(data.status==200){
+            alert("信息修改成功!");
+          }else{
+            alert("信息修改失败!");
+          }
+        },
+        error:function(){
+          alert("请求失败！");
+        }
+      });
+    }
+
+    /* 本地上传 */
+    function getFileUrl(sourceId) {
+      var url;
+      if (navigator.userAgent.indexOf("MSIE") >= 1) { // IE
+        url = document.getElementById(sourceId).value;
+      } else if (navigator.userAgent.indexOf("Firefox") > 0) { // Firefox
+        url = window.URL.createObjectURL(document.getElementById(sourceId).files.item(0));
+      } else if (navigator.userAgent.indexOf("Chrome") > 0) { // Chrome
+        url = window.URL.createObjectURL(document.getElementById(sourceId).files.item(0));
+      }
+      return url;
+    }
+
+    function changeImg() {
+
+      var formData = new FormData();
+      formData.append("pic", document.getElementById("imgOne").files[0]);
+      console.log(document.getElementById("imgOne").files[0]);
+      console.log(formData.values());
+      console.log(formData);
+      $.ajax({
+        type: "POST", // 数据提交类型
+        url: "http://www.boluo.com/img/uploadImg", // 发送地址
+        data: formData, //发送数据
+        async: true, // 是否异步
+        processData: false, //processData 默认为false，当设置为true的时候,jquery ajax 提交的时候不会序列化 data，而是直接使用data
+        contentType: false, //
+        success:function (data) {
+          console.log(data);
+          if(data.error==0){
+            //alert(data.error);
+            document.getElementById("imgInput").value=data.url;
+            document.getElementById("photo").src=data.url;
+          }else {
+            console.log("失败");
+          }
+        },
+        error:function(){
+          alert("请求失败!");
+        }
+      });
+    }
+
+  </script>
+
+</head>
+<body>
+<div id="top"></div>
+<div class="entry">
+  <div class="entry_list">
+    <h3>修改患者人数</h3>
+    <p>请及时修改患者人数,不信谣,不传谣,从我做起</p>
+    <form action="javaScript:void(0)" method="post" id="itemAddForm" class="resource">
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i><span class="change_s"></span>地区</label>
+        <select name="diqu" class='select_down'>
+          <option value="湖北省">湖北省</option>
+          <option value="广东省">广东省</option>
+          <option value="河南省">河南省</option>
+          <option value="浙江省">浙江省</option>
+        </select>
+      </div>
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i>现有确诊</label>
+        <input type="text" name="xianyou" value="" required="required" placeholder="请输入姓名" maxlength="11"/>
+      </div>
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i>累计确诊</label>
+        <input type="text" name="leiji" value="" required="required" placeholder="请输入联系电话" maxlength="11"/>
+      </div>
+
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i>较上日</label>
+        <input type="text" name="bijiao" value="" required="required" placeholder="请输入家庭住址" maxlength="25"/>
+      </div>
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i>累计治愈</label>
+        <input type="text" name="live" value="" required="required" placeholder="请输入联系电话" maxlength="11"/>
+      </div>
+
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i>累计死亡</label>
+        <input type="text" name="death"  value="" required="required" placeholder="请输入家庭住址" maxlength="25"/>
+      </div>
+
+
+      <div class="clear"></div>
+      <div class="sub_btn">
+        <input type="submit" class="sub" value="提交" onclick="submitForm()">
+      </div>
+    </form>
+
+  </div>
+</div>
+<div id="nav_r"></div>
+<div id="bottom"></div>
+
+<div class="success" style="display: none;">
+  <div class="success1">
+    <span></span>
+  </div>
+</div>
+</body>
+
+</html>

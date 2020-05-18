@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="Keywords" content="流浪动物，流浪动物救助，小动物保护，流浪狗，流浪猫，宠物救助，动物保护">
+		<meta name="Description" content="唐山市流浪动物救助官方联盟">
+
+		<link rel="stylesheet" type="text/css" href="index11_files/animals_pc.css"/>
+		<link rel="stylesheet" type="text/css" href="index11_files/cropper.min.css"/>
+		<link rel="stylesheet" type="text/css" href="index11_files/ImgCropping.css"/>
+
+		<script type="text/javascript" src="js/common/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" src="js/cookie.js" charset="utf-8"></script>
+		<script type="text/javascript" src="js/jquery.cookie.js" charset="utf-8"></script>
+
+		<title>丢失动物信息发布</title>
+		<style type="text/css">
+			.clear{clear: left;}
+			.d_sel select{width: 49%;}
+			.d_sel .select_down{background-size: 12%;}
+			.d_sel select:first-child{margin-right: 2%;}
+			.list_tit{width: 100%;}
+			.list_tit input{width: 99% !important;padding-left: 1% !important;}
+			.list_cont{width: 100%;margin-left: 0 !important;}
+			.list_cont textarea{width: 98%;height: 100px;padding: 10px 1%;}
+			.change_s{color: #181818;}
+			
+			.sub_btn input{background: #0BAE11;}
+		</style>
+
+
+		<script>
+
+			function submitForm(){
+
+				var loseTitle=$("form input[name=loseTitle]").val();
+				var loseImage=$("form input[name=loseImage]").val();
+				var loseInfo=$("form textarea[name=loseInfo]").val();
+				var loseType=$("form select[name=loseType]").val();
+				var loseName=$("form input[name=loseName]").val();
+				var loseAddress=$("form input[name=loseAddress]").val();
+				var losePhone=$("form input[name=losePhone]").val();
+
+
+				$.ajax({
+					url:"http://www.boluo.com/lose/save",
+					type:"post",
+					data:{
+						"loseTitle":loseTitle,
+						"loseImage":loseImage,
+						"loseInfo":loseInfo,
+						"loseType":loseType,
+						"loseName":loseName,
+						"loseAddress":loseAddress,
+                        "losePhone":losePhone
+					},
+					dataType:"json",
+					success:function(data){
+						if(data.status==200){
+							alert("新增丢失动物找寻信息成功");
+						}else{
+							alert("新增丢失动物找寻信息失败");
+						}
+					},
+					error:function(){
+						alert("请求失败！");
+					}
+				});
+			}
+
+			/* 本地上传 */
+			function getFileUrl(sourceId) {
+				var url;
+				if (navigator.userAgent.indexOf("MSIE") >= 1) { // IE
+					url = document.getElementById(sourceId).value;
+				} else if (navigator.userAgent.indexOf("Firefox") > 0) { // Firefox
+					url = window.URL.createObjectURL(document.getElementById(sourceId).files.item(0));
+				} else if (navigator.userAgent.indexOf("Chrome") > 0) { // Chrome
+					url = window.URL.createObjectURL(document.getElementById(sourceId).files.item(0));
+				}
+				return url;
+			}
+
+			function changeImg() {
+
+				var formData = new FormData();
+				formData.append("pic", document.getElementById("imgOne").files[0]);
+				console.log(document.getElementById("imgOne").files[0]);
+				console.log(formData.values());
+				console.log(formData);
+				$.ajax({
+					type: "POST", // 数据提交类型
+					url: "http://www.boluo.com/img/uploadImg", // 发送地址
+					data: formData, //发送数据
+					async: true, // 是否异步
+					processData: false, //processData 默认为false，当设置为true的时候,jquery ajax 提交的时候不会序列化 data，而是直接使用data
+					contentType: false, //
+					success:function (data) {
+						console.log(data);
+						if(data.error==0){
+							//alert(data.error);
+							document.getElementById("imgInput").value=data.url;
+							document.getElementById("photo").src=data.url;
+						}else {
+							console.log("失败");
+						}
+					},
+					error:function(){
+						alert("请求失败!");
+					}
+				});
+			}
+
+		</script>
+
+	</head>
+	<body>
+		<div id="top"></div>
+		<div class="entry">
+			<div class="entry_list">
+				<h3>丢失动物信息发布</h3>
+				<p>请填写丢失动物类型、体貌特征等详细信息。</p>
+				<form action="javaScript:void(0)" method="post" id="itemAddForm" class="resource">
+					<div class="list_inp">
+						<label for=""><i class="col_g">*</i>动物类型</label>
+						<select name="loseType" class="sel_btn select_down">
+							<option value="狗">狗</option>
+							<option value="猫">猫</option>
+							<option value="其他">其他</option>
+						</select>
+					</div>
+
+					<div class="list_inp">
+						<label for=""><i class="col_g">*</i><span class="change_s"></span>动物体型</label>
+						<select name="genre" class='select_down'>
+							<option value="资金">小型</option>
+							<option value="物资">中型</option>
+							<option value="场地">大型</option>
+							<option value="其他">其他</option>
+						</select>
+					</div>
+					<div class="list_inp">
+						<label for=""><i class="col_g">*</i><span class="change_s"></span>动物年龄</label>
+						<select name="main_body" class='select_down'>
+							<option value="1">3岁以下</option>
+							<option value="2">3~10岁</option>
+							<option value="3">10岁以上</option>
+						</select>
+					</div>
+					<div class="list_inp">
+						<label for=""><i class="col_g">*</i>家庭住址</label>
+						<input type="text" name="loseAddress" id="" value="" required="required" placeholder="请输入家庭住址" maxlength="25"/>
+					</div>
+
+					<div class="list_inp">
+						<label for=""><i class="col_g">*</i>联系人姓名</label>
+						<input type="text" name="loseName" value="" required="required" placeholder="请输入联系人姓名" maxlength="11"/>
+					</div>
+					<div class="list_inp">
+						<label for=""><i class="col_g">*</i>联系电话</label>
+						<input type="text" name="losePhone" value="" required="required" placeholder="请输入联系电话" maxlength="11"/>
+					</div>
+					<div class="list_inp list_tit">
+						<label for=""><i class="col_g">*</i>信息标题</label>
+						<input type="text" name="loseTitle" value="" required="required" placeholder="请输入信息标题" max=""/>
+					</div>
+					<div class="list_inp list_cont">
+						<label for=""><i class="col_g">*</i>详细信息</label>
+						<textarea name="loseInfo" required="required" rows="" cols="" placeholder="请输入详细内容"></textarea>
+					</div>
+					<div class="list_inp list_tit">
+						<label for=""><i class="col_g">*</i>上传图片</label>
+						<input type="text" name="loseImage" id="imgInput" required="required" placeholder="点击下方的选择文件,图片地址会自动添加到该处" max=""/>
+
+					</div>
+					<div class="clear"></div>
+					<div class="sub_btn">
+
+						<input type="submit" class="sub" value="提交" onclick="submitForm()">
+					</div>
+				</form>
+
+				<img id="photo" src="css/img/shangchuanBg.png" width="109px" height="109px" style="display: block;"/>
+				<form id="form1" action="" method="post" enctype="multipart/form-data">
+					<input type="file" name="imgOneName" id="imgOne"
+						   onchange="changeImg()"/>
+				</form>
+			</div>
+		</div>
+		<div id="nav_r"></div>
+		<div id="bottom"></div>	
+
+		<div class="success" style="display: none;">
+			<div class="success1">
+				<span></span>
+			</div>
+		</div>
+	</body>
+
+</html>

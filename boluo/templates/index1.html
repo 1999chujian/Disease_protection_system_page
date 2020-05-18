@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="_fragments :: head(~{::title})">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>疫情防控</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css" >
+  <link rel="stylesheet" href="../static/css/me.css" >
+
+  <!--必备的Css-->
+  <link href="assets/css/bootstrap.css" rel="stylesheet">
+  <link href="assets/css/theme.css" rel="stylesheet">
+  <link href="assets/css/font-awesome.min.css" rel="stylesheet">
+  <link href="assets/css/alertify.css" rel="stylesheet">
+  <link href="assets/css/opp-app.css" rel="stylesheet">
+
+  <link href="assets/css/jquery.dataTables.css" rel="stylesheet">
+
+  <script type="text/javascript" src="js/common/jquery-1.11.3.min.js"></script>
+  <script type="text/javascript" src="js/cookie.js" charset="utf-8"></script>
+  <script type="text/javascript" src="js/jquery.cookie.js" charset="utf-8"></script>
+
+  <script>
+    window.onload=function(){
+
+      var ticket = $.cookie('USER_NAME');
+
+      if(ticket != null && ticket!= "null"){
+
+        var html = "<a href=\"../setting.html\">"+ticket+",欢迎回来!</a>";
+        var html2 = "<a href=\"../index.html\">注销</a>";
+
+        $("#loginbar").html(html2);
+        $("#regist").html(html);
+
+      }
+
+
+      var localUrl=decodeURI(window.location.href);
+      var queryPageParam=localUrl.substr(localUrl.lastIndexOf("?")+1);
+
+      if(!queryPageParam.match("^page=[0-9]*&rows=[0-9]*$")){
+
+        queryPages("page=1&rows=100");
+        return;
+      }
+      queryPages(queryPageParam);
+
+    }
+
+    function queryPages(param){
+
+      $.ajax({
+        url:"http://api.tianapi.com/txapi/ncovcity/index?key=e97d62988c8a351497f47a069a42c5e0",
+        dataType:"json",
+        type:"GET",
+        success:function(data){
+          console.log(data);
+
+          for(var i=0;i<data.newslist.length;i++){
+            $("#outlook").append("<tr>"+
+                    "<td>"+data.newslist[i].provinceName+"</td>"+
+                    "<td>"+data.newslist[i].currentConfirmedCount+"</td>"+
+                    "<td>"+data.newslist[i].confirmedCount+"</td>"+
+                    "<td>"+data.newslist[i].suspectedCount+"</td>"+
+                    "<td style='color: green'>"+data.newslist[i].curedCount+"</td>"+
+                    "<td style='color: red'>"+data.newslist[i].deadCount+"</td>"+
+                    "</tr>");
+          }
+
+
+
+
+        },
+        error : function(){
+          alert("请求失败");
+        }
+      });
+
+    }
+
+  </script>
+
+</head>
+<body>
+
+<!--导航-->
+<nav th:replace="_fragments :: menu(1)" class="ui inverted attached segment m-padded-tb-mini m-shadow-small" >
+  <div class="ui container">
+    <div class="ui inverted secondary stackable menu">
+      <h2 class="ui teal header item">疫情防控</h2>
+      <a href="index.html" class=" m-item item m-mobile-hide"><i class="mini home icon"></i>首页</a>
+      <a href="index1.html" class="m-item item m-mobile-hide"><i class="mini idea icon"></i>患者人数</a>
+      <a href="index2.html" class="m-item item m-mobile-hide"><i class="mini clone icon"></i>防疫物资</a>
+      <a href="index4.html" class="m-item item m-mobile-hide"><i class="mini tags icon"></i>成为志愿者</a>
+      <a href="about.html" class="m-item item m-mobile-hide"><i class="mini info icon"></i>关于新冠状病毒</a>
+
+      <li class='m-item item m-mobile-hide' id="regist" ><a href="regist.html"></a></li>
+      <li class='m-item item m-mobile-hide' id="loginbar"><a href="login.html"></a></li>
+
+    </div>
+  </div>
+  <a href="#" class="ui menu toggle black icon button m-right-top m-mobile-show">
+    <i class="sidebar icon"></i>
+  </a>
+</nav>
+
+<!--中间内容-->
+<div  class="m-container m-padded-tb-big animated fadeIn">
+  <div class="ui container">
+    <div class="ui stackable grid">
+      <!--左边网站列表-->
+      <div class="eleven wide column">
+        <!--header-->
+        <div class="ui top attached segment">
+          <div class="ui middle aligned two column grid">
+            <div class="column">
+              <h3 class="ui teal header">患者人数</h3>
+            </div>
+            <div class="right aligned column">
+              共 <h2 class="ui orange header m-inline-block m-text-thin" th:text="${page.totalElements}"> 34 </h2> 地区
+            </div>
+          </div>
+        </div>
+
+        <!--content-->
+        <div class="ui attached  segment">
+
+          <table id="exam_datatable" class="table table-striped table-bordered dataTable">
+            <thead>
+            <tr>
+              <th>地区</th>
+              <th>现有确诊</th>
+              <th>累计确诊</th>
+              <th>疑似病例</th>
+              <th style="color: green">治愈</th>
+              <th style="color: red">死亡</th>
+
+            </tr>
+            </thead>
+            <tbody id="outlook">
+
+            </tbody>
+            <tfoot>
+
+            </tfoot>
+
+          </table>
+
+        </div>
+
+        <!--footer-->
+        <div class="ui bottom attached segment" th:if="${page.totalPages}>1">
+          <div class="ui middle aligned two column grid">
+            <div class="column">
+              <a href="#" th:href="@{/(page=${page.number}-1)}"  th:unless="${page.first}" class="ui mini teal basic button">上一页</a>
+            </div>
+            <div class="right aligned column">
+              <a href="#" th:href="@{/(page=${page.number}+1)}"  th:unless="${page.last}" class="ui mini teal basic button">下一页</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!--右边的top-->
+      <div class="five wide column">
+
+        <!--二维码-->
+        <h4 class="ui horizontal divider header m-margin-top-large">扫码关注公众号</h4>
+        <div class="ui centered card" style="width: 11em">
+          <img src="../static/images/wechat.png" th:src="@{/images/wechat.png}" alt="" class="ui rounded image" >
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<br>
+<br>
+<!--底部footer-->
+<footer th:replace="_fragments :: footer" class="ui inverted vertical segment m-padded-tb-massive">
+  <div class="ui center aligned container">
+    <div class="ui inverted divided stackable grid">
+      <div class="three wide column">
+        <div class="ui inverted link list">
+          <div class="item">
+            <img src="../static/images/wechat.jpg" th:src="@{/images/wechat.jpg}"  class="ui rounded image" alt="" style="width: 110px">
+          </div>
+        </div>
+      </div>
+      <div class="three wide column">
+        <h4 class="ui inverted header m-text-thin m-text-spaced " >感人事迹</h4>
+        <div class="ui inverted link list">
+          <a href="#" class="item m-text-thin">......</a>
+          <a href="#" class="item m-text-thin">......</a>
+          <a href="#" class="item m-text-thin">......</a>
+        </div>
+      </div>
+      <div class="three wide column">
+        <h4 class="ui inverted header m-text-thin m-text-spaced ">联系管理员</h4>
+        <div class="ui inverted link list">
+          <a href="#" class="item m-text-thin">Email：1023304783@qq.com</a>
+          <a href="#" class="item m-text-thin">QQ：1023304783</a>
+        </div>
+      </div>
+      <div class="seven wide column">
+        <h4 class="ui inverted header m-text-thin m-text-spaced ">疫情防控</h4>
+        <p class="m-text-thin m-text-spaced m-opacity-mini">。。</p>
+      </div>
+    </div>
+    <div class="ui inverted section divider"></div>
+    <p class="m-text-thin m-text-spaced m-opacity-tiny">Copyright © 2020 - 2020 Designed by Tanjunfu</p>
+  </div>
+
+</footer>
+</body>
+</html>

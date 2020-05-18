@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="_fragments :: head(~{::title})">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>疫情防控</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css" >
+    <link rel="stylesheet" href="../static/css/me.css" >
+
+    <script type="text/javascript" src="js/common/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="js/cookie.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/jquery.cookie.js" charset="utf-8"></script>
+
+    <style type="text/css">
+      p {
+        display: block;
+
+        overflow: hidden;
+
+        white-space: nowrap;
+
+        text-overflow: ellipsis;
+
+        width: 70%;
+      }
+    </style>
+
+    <script>
+
+      var page = 1;
+        window.onload=function(){
+
+            var ticket = $.cookie('USER_NAME');
+
+            if(ticket != null && ticket!= "null"){
+
+                var html = "<a href=\"../setting.html\">"+ticket+",欢迎回来!</a>";
+                var html2 = "<a href=\"../index.html\">注销</a>";
+
+                $("#loginbar").html(html2);
+                $("#regist").html(html);
+
+            }
+
+
+          var localUrl=decodeURI(window.location.href);
+          var queryPageParam=localUrl.substr(localUrl.lastIndexOf("?")+1);
+
+          if(!queryPageParam.match("^page=[0-9]*&rows=[0-9]*$")){
+
+            queryPages("page=1&rows=7");
+            return;
+          }
+          queryPages(queryPageParam);
+
+
+        }
+
+        function queryPages(param){
+
+          $.ajax({
+            url:"http://www.boluo.com/user/wenzhang?"+param,
+            dataType:"json",
+            type:"POST",
+            success:function(data){
+
+              if(data.rows.length>0){
+
+                $.each(data.rows,function(index, animal){
+
+                  var wenzhang_html="index9.html?wenzhangId="+animal.wenzhangId;
+
+                  $("#outlook").append("<div class=\"ui padded vertical segment m-padded-tb-large\" th:each=\"blog : ${page.content}\" > <!--th:each=\"blog : ${page.content}\"-->\n" +
+                          "              <div class=\"ui middle aligned mobile reversed stackable grid\" >\n" +
+                          "                <div class=\"eleven wide column\">\n" +
+                          "                  <h3 class=\"ui header\" ><a href="+wenzhang_html+" th:href=\"@{/blog/{id}(id=${blog.id})}\" target=\"_blank\" class=\"m-black\" th:text=\"${blog.title}\">"+animal.wenzhangTitle+"</a></h3>\n" +
+                          "                  <p class=\"m-text\" th:text=\"|${blog.description}......|\">"+animal.wenzhangInfo+"</p>\n" +
+                          "\n" +
+                          "                  <div class=\"ui grid\">\n" +
+                          "                    <div class=\"eleven wide column\">\n" +
+                          "                      <div class=\"ui mini horizontal link list\">\n" +
+                          "                        <div class=\"item\">\n" +
+                          "                          <img src=\"https://unsplash.it/100/100?image=1005\" th:src=\"@{${blog.user.avatar}}\"  alt=\"\" class=\"ui avatar image\">\n" +
+                          "                          <div class=\"content\"><a href=\"#\" class=\"header\" th:text=\"${blog.user.nickname}\" >"+animal.userName+"</a></div>\n" +
+                          "                        </div>\n" +
+                          "                        <div class=\"item\">\n" +
+                          "                          <i class=\"calendar icon\"></i><span>"+animal.cTime+"</span>\n" +
+                          "                        </div>\n" +
+                          "                      </div>\n" +
+                          "                    </div>\n" +
+                          "\n" +
+                          "                  </div>\n" +
+                          "\n" +
+                          "                </div>\n" +
+                          "\n" +
+                          "                <div class=\"five wide column\">\n" +
+                          "                  <a href="+wenzhang_html+" th:href=\"@{/blog/{id}(id=${blog.id})}\" target=\"_blank\">\n" +
+                          "                    <img src="+animal.wenzhangImg+"  class=\"ui rounded image\">\n" +
+                          "                  </a>\n" +
+                          "                </div>\n" +
+                          "              </div>\n" +
+                          "            </div>");
+
+                })
+              }
+            },
+            error : function(){
+              alert("请求失败");
+            }
+          });
+        }
+
+        function jiansuo() {
+          var text = $("div input[name=input2]").val();
+
+          var htm = "http://www.boluo.com/user/jiansuo?page=1&rows=20&text="+text;
+          console.log(text);
+          console.log(htm);
+
+          $("#outlook").html("");
+
+          $.ajax({
+            url:"http://www.boluo.com/user/jiansuo?page=1&rows=100&text="+text,
+            dataType:"json",
+            type:"POST",
+            success:function(data){
+
+              if(data.rows.length == 0){
+                $("#outlook").append("无相关信息");
+              }
+
+
+
+              if(data.rows.length>0){
+
+                $.each(data.rows,function(index, animal){
+                  //$.cookie("animalId",animal.animalId);
+                  console.log(animal.wenzhangId);
+                  var wenzhang_html="index9.html?wenzhangId="+animal.wenzhangId;
+
+                  console.log(animal);
+
+                  $("#outlook").append("<div class=\"ui padded vertical segment m-padded-tb-large\" th:each=\"blog : ${page.content}\" > <!--th:each=\"blog : ${page.content}\"-->\n" +
+                          "              <div class=\"ui middle aligned mobile reversed stackable grid\" >\n" +
+                          "                <div class=\"eleven wide column\">\n" +
+                          "                  <h3 class=\"ui header\" ><a href="+wenzhang_html+" th:href=\"@{/blog/{id}(id=${blog.id})}\" target=\"_blank\" class=\"m-black\" th:text=\"${blog.title}\">"+animal.wenzhangTitle+"</a></h3>\n" +
+                          "                  <p class=\"m-text\" th:text=\"|${blog.description}......|\">"+animal.wenzhangInfo+"</p>\n" +
+                          "\n" +
+                          "                  <div class=\"ui grid\">\n" +
+                          "                    <div class=\"eleven wide column\">\n" +
+                          "                      <div class=\"ui mini horizontal link list\">\n" +
+                          "                        <div class=\"item\">\n" +
+                          "                          <img src=\"https://unsplash.it/100/100?image=1005\" th:src=\"@{${blog.user.avatar}}\"  alt=\"\" class=\"ui avatar image\">\n" +
+                          "                          <div class=\"content\"><a href=\"#\" class=\"header\" th:text=\"${blog.user.nickname}\" >"+animal.userName+"</a></div>\n" +
+                          "                        </div>\n" +
+                          "                        <div class=\"item\">\n" +
+                          "                          <i class=\"calendar icon\"></i><span>"+animal.cTime+"</span>\n" +
+                          "                        </div>\n" +
+                          "                      </div>\n" +
+                          "                    </div>\n" +
+                          "\n" +
+                          "                  </div>\n" +
+                          "\n" +
+                          "                </div>\n" +
+                          "\n" +
+                          "                <div class=\"five wide column\">\n" +
+                          "                  <a href="+wenzhang_html+" th:href=\"@{/blog/{id}(id=${blog.id})}\" target=\"_blank\">\n" +
+                          "                    <img src="+animal.wenzhangImg+"  class=\"ui rounded image\">\n" +
+                          "                  </a>\n" +
+                          "                </div>\n" +
+                          "              </div>\n" +
+                          "            </div>");
+
+                })
+              }
+            },
+            error : function(){
+              alert("请求失败");
+            }
+          });
+
+        }
+
+
+        function frontPage() {
+          page = page-1;
+
+          if(page<=0){
+            alert("上一页没有数据啦！");
+            page=1;
+          }
+
+          $("#outlook").html("");
+
+          queryPages("page="+page+"&rows=7");
+
+        }
+
+        function nextPage() {
+          page = page+1;
+
+          $("#outlook").html("");
+
+          queryPages("page="+page+"&rows=7");
+
+        }
+
+
+    </script>
+
+</head>
+<body>
+
+  <!--导航-->
+  <nav th:replace="_fragments :: menu(1)" class="ui inverted attached segment m-padded-tb-mini m-shadow-small" >
+    <div class="ui container">
+      <div class="ui inverted secondary stackable menu">
+        <h2 class="ui teal header item">疫情防控</h2>
+        <a href="index.html" class=" m-item item m-mobile-hide"><i class="mini home icon"></i>首页</a>
+        <a href="index1.html" class="m-item item m-mobile-hide"><i class="mini idea icon"></i>患者人数</a>
+        <a href="index2.html" class="m-item item m-mobile-hide"><i class="mini clone icon"></i>防疫物资</a>
+        <a href="index4.html" class="m-item item m-mobile-hide"><i class="mini tags icon"></i>成为志愿者</a>
+        <a href="about.html" class="m-item item m-mobile-hide"><i class="mini info icon"></i>关于新冠状病毒</a>
+
+          <li class='m-item item m-mobile-hide' id="regist" ><a href="regist.html"></a></li>
+          <li class='m-item item m-mobile-hide' id="loginbar"><a href="login.html"></a></li>
+
+      </div>
+    </div>
+    <a href="#" class="ui menu toggle black icon button m-right-top m-mobile-show">
+      <i class="sidebar icon"></i>
+    </a>
+  </nav>
+
+  <!--中间内容-->
+  <div  class="m-container m-padded-tb-big animated fadeIn">
+    <div class="ui container">
+      <div class="ui stackable grid">
+        <!--左边网站列表-->
+        <div class="eleven wide column">
+          <!--header-->
+          <div class="ui top attached segment">
+            <div class="ui middle aligned two column grid">
+              <div class="column">
+                <h3 class="ui teal header">疫情防控</h3>
+              </div>
+
+              <div class="right aligned column">
+                <input type="text" name="input2"/><input type="button" value="搜索" onclick="jiansuo()"/>
+              </div>
+
+            </div>
+          </div>
+
+          <!--content-->
+          <div class="ui attached  segment" id="outlook">
+
+
+          </div>
+
+          <!--footer-->
+          <div class="ui bottom attached segment" th:if="${page.totalPages}>1">
+            <div class="ui middle aligned two column grid">
+              <div class="column">
+                <a href="javascript:frontPage()" th:href="@{/(page=${page.number}-1)}"  th:unless="${page.first}" class="ui mini teal basic button">上一页</a>
+              </div>
+              <div class="right aligned column">
+                <a href="javascript:nextPage()" th:href="@{/(page=${page.number}+1)}"  th:unless="${page.last}" class="ui mini teal basic button">下一页</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!--右边的top-->
+        <div class="five wide column">
+
+
+          </div>
+
+          <!--二维码-->
+          <h4 class="ui horizontal divider header m-margin-top-large">扫码关注公众号</h4>
+          <div class="ui centered card" style="width: 11em">
+            <img src="../static/images/wechat.png" th:src="@{/images/wechat.png}" alt="" class="ui rounded image" >
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <br>
+  <br>
+  <!--底部footer-->
+  <footer th:replace="_fragments :: footer" class="ui inverted vertical segment m-padded-tb-massive">
+    <div class="ui center aligned container">
+      <div class="ui inverted divided stackable grid">
+        <div class="three wide column">
+          <div class="ui inverted link list">
+            <div class="item">
+              <img src="../static/images/wechat.png" th:src="@{/images/wechat.jpg}"  class="ui rounded image" alt="" style="width: 110px">
+            </div>
+          </div>
+        </div>
+        <div class="three wide column">
+          <h4 class="ui inverted header m-text-thin m-text-spaced " >感人事迹</h4>
+          <div class="ui inverted link list">
+            <a href="#" class="item m-text-thin">......</a>
+            <a href="#" class="item m-text-thin">......</a>
+            <a href="#" class="item m-text-thin">......</a>
+          </div>
+        </div>
+        <div class="three wide column">
+          <h4 class="ui inverted header m-text-thin m-text-spaced ">联系管理员</h4>
+          <div class="ui inverted link list">
+            <a href="#" class="item m-text-thin">Email：1023304783@qq.com</a>
+            <a href="#" class="item m-text-thin">QQ：1023304783</a>
+          </div>
+        </div>
+        <div class="seven wide column">
+          <h4 class="ui inverted header m-text-thin m-text-spaced ">疫情防控</h4>
+          <p class="m-text-thin m-text-spaced m-opacity-mini">。。</p>
+        </div>
+      </div>
+      <div class="ui inverted section divider"></div>
+      <p class="m-text-thin m-text-spaced m-opacity-tiny">Copyright © 2020 - 2020 Designed by Tanjunfu</p>
+    </div>
+
+  </footer>
+</body>
+</html>

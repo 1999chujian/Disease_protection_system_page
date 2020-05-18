@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="Keywords" content="疫情防护">
+  <meta name="Description" content="疫情防护">
+
+  <link rel="stylesheet" type="text/css" href="index11_files/animals_pc.css"/>
+  <link rel="stylesheet" type="text/css" href="index11_files/cropper.min.css"/>
+  <link rel="stylesheet" type="text/css" href="index11_files/ImgCropping.css"/>
+
+  <script type="text/javascript" src="js/common/jquery-1.11.3.min.js"></script>
+  <script type="text/javascript" src="js/cookie.js" charset="utf-8"></script>
+  <script type="text/javascript" src="js/jquery.cookie.js" charset="utf-8"></script>
+
+  <title>疫情防护物资申请</title>
+  <style type="text/css">
+    .clear{clear: left;}
+    .d_sel select{width: 49%;}
+    .d_sel .select_down{background-size: 12%;}
+    .d_sel select:first-child{margin-right: 2%;}
+    .list_tit{width: 100%;}
+    .list_tit input{width: 99% !important;padding-left: 1% !important;}
+    .list_cont{width: 100%;margin-left: 0 !important;}
+    .list_cont textarea{width: 98%;height: 100px;padding: 10px 1%;}
+    .change_s{color: #181818;}
+
+    .sub_btn input{background: #0BAE11;}
+  </style>
+
+
+  <script>
+
+    function submitForm(){
+
+      var userId = $.cookie("USER_ID");
+      var userName = $("form input[name=animalName]").val();
+      var userInfo = $("form textarea[name=animalInfo]").val();
+      var userPhone = $("form input[name=giveName]").val();
+      var shenqingAddress = $("form input[name=shenqingAddress]").val();
+      var shenqingType = $("form select[name=shenqingType]").val();
+
+      console.log(shenqingAddress);
+      console.log(shenqingType);
+
+      $.ajax({
+        url:"http://www.boluo.com/user/shenqing",
+        type:"post",
+        data:{
+          "userId":userId,
+          "userName":userName,
+          "userPhone":userPhone,
+          "userInfo":userInfo,
+          "shenqingAddress":shenqingAddress,
+          "shenqingType":shenqingType
+        },
+        dataType:"json",
+        success:function(data){
+          if(data.status==200){
+            alert("申请防疫物资信息成功");
+          }else{
+            alert("申请防疫物资信息失败");
+          }
+        },
+        error:function(){
+          alert("请求失败！");
+        }
+      });
+    }
+
+    /* 本地上传 */
+    function getFileUrl(sourceId) {
+      var url;
+      if (navigator.userAgent.indexOf("MSIE") >= 1) { // IE
+        url = document.getElementById(sourceId).value;
+      } else if (navigator.userAgent.indexOf("Firefox") > 0) { // Firefox
+        url = window.URL.createObjectURL(document.getElementById(sourceId).files.item(0));
+      } else if (navigator.userAgent.indexOf("Chrome") > 0) { // Chrome
+        url = window.URL.createObjectURL(document.getElementById(sourceId).files.item(0));
+      }
+      return url;
+    }
+
+    function changeImg() {
+
+      var formData = new FormData();
+      formData.append("pic", document.getElementById("imgOne").files[0]);
+      console.log(document.getElementById("imgOne").files[0]);
+      console.log(formData.values());
+      console.log(formData);
+      $.ajax({
+        type: "POST", // 数据提交类型
+        url: "http://www.boluo.com/img/uploadImg", // 发送地址
+        data: formData, //发送数据
+        async: true, // 是否异步
+        processData: false, //processData 默认为false，当设置为true的时候,jquery ajax 提交的时候不会序列化 data，而是直接使用data
+        contentType: false, //
+        success:function (data) {
+          console.log(data);
+          if(data.error==0){
+            //alert(data.error);
+            document.getElementById("imgInput").value=data.url;
+            document.getElementById("photo").src=data.url;
+          }else {
+            console.log("失败");
+          }
+        },
+        error:function(){
+          alert("请求失败!");
+        }
+      });
+    }
+
+  </script>
+
+</head>
+<body>
+<div id="top"></div>
+<div class="entry">
+  <div class="entry_list">
+    <h3>疫情防护物资申请</h3>
+    <p>紧急防疫物资一人仅能申请一份,请勿多次申领</p>
+    <form action="javaScript:void(0)" method="post" id="itemAddForm" class="resource">
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i>姓名</label>
+        <input type="text" name="animalName" value="" required="required" placeholder="请输入姓名" maxlength="11"/>
+      </div>
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i>性别</label>
+        <select name="animalType" class="sel_btn select_down">
+          <option value="男">男</option>
+          <option value="女">女</option>
+        </select>
+      </div>
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i><span class="change_s"></span>年龄</label>
+        <select name="main_body" class='select_down'>
+          <option value="1">25岁以下</option>
+          <option value="2">25~50岁</option>
+          <option value="3">50岁以上</option>
+        </select>
+      </div>
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i>收货地址</label>
+        <input type="text" name="shenqingAddress" id="" value="" required="required" placeholder="请输入收货住址" maxlength="25"/>
+      </div>
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i>联系电话</label>
+        <input type="text" name="giveName" value="" required="required" placeholder="请输入联系电话" maxlength="11"/>
+      </div>
+
+      <div class="list_inp">
+        <label for=""><i class="col_g">*</i><span class="change_s"></span>申请物资</label>
+        <select name="shenqingType" class='select_down'>
+          <option value="1">口罩</option>
+          <option value="2">消毒水</option>
+          <option value="3">体温计</option>
+          <option value="4">口罩+消毒水</option>
+          <option value="5">口罩+体温计</option>
+          <option value="6">消毒水+体温计</option>
+          <option value="7">口罩+消毒水+体温计</option>
+        </select>
+      </div>
+
+      <div class="list_inp list_tit">
+        <label for=""><i class="col_g">*</i>有无发热咳嗽等症状</label>
+        <input type="text" name="giveTitle" value="" required="required" placeholder="请输入您有无咳嗽等症状" max=""/>
+      </div>
+      <div class="list_inp list_cont">
+        <label for=""><i class="col_g">*</i>备注信息</label>
+        <textarea name="animalInfo" required="required" rows="" cols="" placeholder="请输入备注信息"></textarea>
+      </div>
+      <div class="list_inp list_tit">
+        <label for=""><i class="col_g">*</i>上传身份证图片</label>
+        <input type="text" name="animalImage" id="imgInput" required="required" placeholder="点击下方的选择文件,图片地址会自动添加到该处" max=""/>
+
+      </div>
+      <div class="clear"></div>
+      <div class="sub_btn">
+        <input type="submit" class="sub" value="提交" onclick="submitForm()">
+      </div>
+    </form>
+
+    <img id="photo" src="css/img/shangchuanBg.png" width="109px" height="109px" style="display: block;"/>
+    <form id="form1" action="" method="post" enctype="multipart/form-data">
+      <input type="file" name="imgOneName" id="imgOne"
+             onchange="changeImg()"/>
+    </form>
+  </div>
+</div>
+<div id="nav_r"></div>
+<div id="bottom"></div>
+
+<div class="success" style="display: none;">
+  <div class="success1">
+    <span></span>
+  </div>
+</div>
+</body>
+
+</html>
