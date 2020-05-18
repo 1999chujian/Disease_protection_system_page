@@ -18,6 +18,7 @@
     <script type="text/javascript" src="js/common/jquery-1.11.3.min.js"></script>
     <!--<script type="text/javascript" src="js/cookie.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/jquery.cookie.js" charset="utf-8"></script>-->
+    <script type="text/javascript" src="./layui/layui.all.js"></script>
 
     <script type="text/javascript">
 
@@ -55,7 +56,7 @@
                                 "<td>"+data.rows[i].userPassword+"</td>"+
                                 "<td>"+data.rows[i].userPhone+"</td>"+
                                 "<td>"+data.rows[i].userEmail+"</td>"+
-                                "<td ><input type='button' value='修改' onclick='xiugai()'/>&nbsp;<input type='button' value='删除' onclick='xiugai()'/></td>"+
+                                "<td><input id='"+data.rows[i].userId+"' type='button' value='修改' onclick='xiugai(this.id)'/>&nbsp;<input id='"+data.rows[i].userId+"' type='button' value='删除' onclick='onclick12(this.id)'/></td>"+
                                 "</tr>");
                         }
                     }
@@ -67,18 +68,16 @@
             });
         }
 
-        function onclick12() {
+        function onclick12(userId) {
 
-            var userId = $("input[name=input1]").val();
+            //var userId = $("input[name=input1]").val();
             console.log(userId);
 
             $.ajax({
                 url:"http://www.boluo.com/user/delete/"+userId,
                 dataType:"json",
-                type:"POST",
-                data:{
-                    "userId":userId
-                },
+                type:"GET",
+
                 success:function(){
                     alert("删除成功!");
                     location.reload();
@@ -110,6 +109,50 @@
             $("#outlook").html("");
 
             queryPages("page="+page+"&rows=10");
+
+        }
+        
+        
+        function xiugai(userId) {
+
+            var id = userId;
+
+            layer.open({
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                area: ['350px', '420px'], //宽高
+                content: '<div><br/><br/>&nbsp;用户名<input type="text" id="yonghuming"><br/>&nbsp;手机号<input type="text" id="shoujihao"><br/><div>&nbsp;邮&nbsp;&nbsp;&nbsp;箱<input type="text" id="youxiang"><br/><br/>&nbsp;&nbsp;<input type="button" id="'+id+'" value="确定" onclick="xiugai2(this.id)" /></div>'
+
+            });
+        }
+
+        function xiugai2(userId) {
+            var userName = $("#yonghuming").val();
+            var userPhone = $("#shoujihao").val();
+            var userEmail = $("#youxiang").val();
+            console.log(userId);
+            console.log(userName);
+            console.log(userPhone);
+            console.log(userEmail);
+
+            $.ajax({
+                url:"http://admin.boluo.com/admin/xiugai",
+                dataType:"json",
+                type:"GET",
+                data:{
+                    "userId":userId,
+                    "userName":userName,
+                    "userPhone":userPhone,
+                    "userEmail":userEmail
+                },
+                success(){
+                    alert("修改成功！");
+                },
+                error(){
+                    alert("修改失败！");
+                }
+
+            });
 
         }
 
@@ -204,10 +247,10 @@
                         </table>
                         <br/>
                         <div align="right">
-                            <tr>
+                            <!--<tr>
                                 <td><input style="width: 100px; height: 28px;" placeholder="请输入用户ID" type="text" name="input1"/></td>
                                 <td><input style="height: 28px;" type="button" onclick="onclick12()" value="删除"/></td>
-                            </tr>
+                            </tr>-->
                         </div>
 
                     </div>
