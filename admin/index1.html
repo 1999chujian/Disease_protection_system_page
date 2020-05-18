@@ -48,32 +48,34 @@
                     console.log(data);
                     if(data.rows.length>0){
 
-                        $.each(data.rows,function(index, temp){
+                        /*$.each(data.rows,function(index, temp){*/
+                        for(var i=0;i<data.rows.length;i++){
 
-                            if(temp.shenqingType == 1){
+                            if(data.rows[i].shenqingType == 1){
                                 var shenqingTy = "口罩";
-                            }else if(temp.shenqingType == 2){
+                            }else if(data.rows[i].shenqingType == 2){
                                 var shenqingTy = "消毒水";
-                            }else if(temp.shenqingType == 3){
+                            }else if(data.rows[i].shenqingType == 3){
                                 var shenqingTy = "体温计";
-                            }else if(temp.shenqingType == 4){
+                            }else if(data.rows[i].shenqingType == 4){
                                 var shenqingTy = "口罩+消毒水";
-                            }else if(temp.shenqingType == 5){
+                            }else if(data.rows[i].shenqingType == 5){
                                 var shenqingTy = "口罩+体温计";
-                            }else if(temp.shenqingType == 6){
+                            }else if(data.rows[i].shenqingType == 6){
                                 var shenqingTy = "消毒水+体温计";
                             }else{
                                 var shenqingTy = "口罩+消毒水+体温计";
                             }
 
                             $("#outlook").append("<tr>"+
-                                "<td>"+temp.userId+"</td>"+
-                                "<td>"+temp.userName+"</td>"+
-                                "<td>"+temp.userPhone+"</td>"+
+                                "<td>"+data.rows[i].userId+"</td>"+
+                                "<td>"+data.rows[i].userName+"</td>"+
+                                "<td>"+data.rows[i].userPhone+"</td>"+
                                 "<td>"+shenqingTy+"</td>"+
-                                "<td>"+temp.shenqingAddress+"</td>"+
+                                "<td>"+data.rows[i].shenqingAddress+"</td>"+
+                                "<td><input id='"+data.rows[i].userId+"' type='button' value='批准' onclick='onclick12(this.id)'></td>"+
                                 "</tr>");
-                        });
+                        }
                     }
 
                 },
@@ -83,10 +85,10 @@
             });
         }
 
-        function onclick12() {
+        function onclick12(userId) {
 
-            var userId = $("input[name=input1]").val();
-            console.log(userId);
+            //var userId = $("input[name=input1]").val();
+            //console.log(userId);
 
             $.ajax({
                 url:"http://admin.boluo.com/admin/shanshenqing",
@@ -223,6 +225,7 @@
                                 <th>申请人电话</th>
                                 <th>需求物资</th>
                                 <th>收货地址</th>
+                                <th>操作</th>
                             </tr>
                             </thead>
                             <tbody id="outlook">
@@ -236,10 +239,10 @@
                         </table>
                         <br/>
                         <div align="right">
-                            <tr>
+                            <!--<tr>
                                 <td><input style="width: 100px; height: 28px;" placeholder="请输入用户ID" type="text" name="input1"/></td>
                                 <td><input name="input1" style="height: 28px;" type="button" onclick="onclick12()" value="批准"/></td>
-                            </tr>
+                            </tr>-->
                         </div>
 
                     </div>

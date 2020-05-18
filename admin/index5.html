@@ -44,16 +44,17 @@
                     console.log(data);
                     if(data.rows.length>0){
 
-                        $.each(data.rows,function(index, temp){
+                        for(var i=0;i<data.rows.length;i++){
 
                             $("#outlook").append("<tr>"+
-                                "<td>"+temp.messageId+"</td>"+
-                                "<td>"+temp.userName+"</td>"+
-                                "<td>"+temp.leaveMessage+"</td>"+
-                                "<td>"+temp.wenzhangId+"</td>"+
-                                "<td>可见</td>"+
+                                "<td>"+data.rows[i].messageId+"</td>"+
+                                "<td>"+data.rows[i].userName+"</td>"+
+                                "<td>"+data.rows[i].leaveMessage+"</td>"+
+                                "<td>"+data.rows[i].wenzhangId+"</td>"+
+                                "<td><input id='"+data.rows[i].messageId+"' type='button' value='删除' onclick='onclick12(this.id)'/></td>"+
                                 "</tr>");
-                        });
+
+                        }
                     }
 
                 },
@@ -63,10 +64,10 @@
             });
         }
 
-        function onclick12() {
+        function onclick12(userId) {
 
-            var userId = $("input[name=input1]").val();
-            console.log(userId);
+            //var userId = $("input[name=input1]").val();
+            //console.log(userId);
 
             $.ajax({
                 url:"http://admin.boluo.com/admin/shanping/"+userId,
@@ -105,19 +106,17 @@
 
                     if(data.rows.length>0){
 
-                        $.each(data.rows,function(index, animal){
-
-                            console.log(animal);
+                        for(var i=0;i<data.rows.length;i++){
 
                             $("#outlook").append("<tr>"+
-                                "<td>"+animal.messageId+"</td>"+
-                                "<td>"+animal.userName+"</td>"+
-                                "<td>"+animal.leaveMessage+"</td>"+
-                                "<td>"+animal.wenzhangId+"</td>"+
-                                "<td>可见</td>"+
+                                "<td>"+data.rows[i].messageId+"</td>"+
+                                "<td>"+data.rows[i].userName+"</td>"+
+                                "<td>"+data.rows[i].leaveMessage+"</td>"+
+                                "<td>"+data.rows[i].wenzhangId+"</td>"+
+                                "<td><input id='"+data.rows[i].messageId+"' type='button' value='删除' onclick='onclick12(this.id)'/></td>"+
                                 "</tr>");
 
-                        })
+                        }
                     }
                 },
                 error : function(){
@@ -177,7 +176,7 @@
             <div class="accordion" id="accordion2">
                 <div class="accordion-group">
                     <div class="accordion-heading">
-                        <a class="accordion-toggle b_F79999" href="index_admin.html"><i class="icon-dashboard"></i>
+                        <a class="accordion-toggle b_F79999" href="index.html"><i class="icon-dashboard"></i>
                             <span>管理员首页</span></a>
                     </div>
                 </div>
@@ -221,7 +220,7 @@
                                 <th>评论人</th>
                                 <th>评论内容</th>
                                 <th>对应文章ID</th>
-                                <th>评论状态</th>
+                                <th>操作</th>
 
                             </tr>
                             </thead>
@@ -236,10 +235,10 @@
                         </table>
                         <br/>
                         <div align="right">
-                            <tr>
+                            <!--<tr>
                                 <td><input style="width: 100px; height: 28px;" placeholder="请输入评论ID" type="text" name="input1"/></td>
                                 <td><input style="height: 28px;" type="button" onclick="onclick12()" value="删除"/></td>
-                            </tr>
+                            </tr>-->
                         </div>
 
                     </div>
