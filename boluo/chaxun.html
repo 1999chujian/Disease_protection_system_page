@@ -33,7 +33,11 @@
                 success:function(data){
                     console.log(data);
                     if(data == 1){
-                        $("#outlook").append("您还未申请或管理员没同意,请耐心等待!")
+                        $("#outlook").append("您还未申请防疫物资!")
+                    }
+
+                    if(data == 2){
+                        $("#outlook").append("您的申请已经发送给管理员，请等待管理员处理您的申请！")
                     }
 
                     if(data == 3){
