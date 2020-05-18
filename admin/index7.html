@@ -11,12 +11,15 @@
     <link href="assets/css/font-awesome.min.css" rel="stylesheet">
     <link href="assets/css/alertify.css" rel="stylesheet">
     <link href="assets/css/opp-app.css" rel="stylesheet">
+    <link href="css/dwzj.css" rel="stylesheet">
 
     <link href="assets/css/jquery.dataTables.css" rel="stylesheet">
 
     <script type="text/javascript" src="js/common/jquery-1.11.3.min.js"></script>
 
     <script type="text/javascript">
+
+        var page = 1;
 
         window.onload=function(){
 
@@ -25,7 +28,7 @@
 
             if(!queryPageParam.match("^page=[0-9]*&rows=[0-9]*$")){
 
-                queryPages("page=1&rows=10000");
+                queryPages("page=1&rows=10");
                 return;
             }
             queryPages(queryPageParam);
@@ -41,18 +44,19 @@
                     console.log(data);
                     if(data.rows.length>0){
 
-                        $.each(data.rows,function(index, temp){
+                        /*$.each(data.rows,function(index, temp){*/
+                        for(var i=0;i<data.rows.length;i++){
 
                             $("#outlook").append("<tr>"+
-                                "<td>"+temp.userId+"</td>"+
-                                "<td>"+temp.volunteerName+"</td>"+
-                                "<td>"+temp.volunteerGender+"</td>"+
-                                "<td>"+temp.volunteerAge+"</td>"+
-                                "<td style='color: green'>"+temp.volunteerHealth+"</td>"+
-                                "<td>"+temp.volunteerPhone+"</td>"+
-                                "<td>"+temp.volunteerAddress+"</td>"+
+                                "<td>"+data.rows[i].userId+"</td>"+
+                                "<td>"+data.rows[i].volunteerName+"</td>"+
+                                "<td>"+data.rows[i].volunteerGender+"</td>"+
+                                "<td>"+data.rows[i].volunteerAge+"</td>"+
+                                "<td style='color: green'>"+data.rows[i].volunteerPhone+"</td>"+
+                                "<td>"+data.rows[i].volunteerAddress+"</td>"+
+                                "<td><input id='"+data.rows[i].userId+"' type='button' value='批准' onclick='onclick12(this.id)'/>&nbsp;<input id='"+data.rows[i].userId+"' type='button' value='拒绝' onclick='onclick13(this.id)'/></td>"+
                                 "</tr>");
-                        });
+                        }
                     }
 
                 },
@@ -62,9 +66,9 @@
             });
         }
 
-        function onclick12() {
+        function onclick12(userId) {
 
-            var userId = $("input[name=input1]").val();
+            //var userId = $("input[name=input1]").val();
             console.log(userId);
 
             $.ajax({
@@ -85,9 +89,9 @@
 
         }
 
-        function onclick13() {
+        function onclick13(userId) {
 
-            var userId = $("input[name=input1]").val();
+            //var userId = $("input[name=input1]").val();
             console.log(userId);
 
             $.ajax({
@@ -107,6 +111,30 @@
             });
 
         }
+
+        function frontPage() {
+            page = page-1;
+
+            if(page<=0){
+                alert("上一页没有数据啦！");
+                page=1;
+            }
+
+            $("#outlook").html("");
+
+            queryPages("page="+page+"&rows=10");
+
+        }
+
+        function nextPage() {
+            page = page+1;
+
+            $("#outlook").html("");
+
+            queryPages("page="+page+"&rows=10");
+
+        }
+
 
     </script>
 
@@ -135,7 +163,7 @@
             <div class="accordion" id="accordion2">
                 <div class="accordion-group">
                     <div class="accordion-heading">
-                        <a class="accordion-toggle b_F79999" href="index_admin.html"><i class="icon-dashboard"></i>
+                        <a class="accordion-toggle b_F79999" href="index.html"><i class="icon-dashboard"></i>
                             <span>管理员首页</span></a>
                         <a class="accordion-toggle b_F79999" href="index7.html"><i class="icon-dashboard"></i>
                             <span>查看申请名单</span></a>
@@ -182,9 +210,9 @@
                                 <th>姓名</th>
                                 <th>性别</th>
                                 <th>年龄</th>
-                                <th>身体状况</th>
                                 <th>联系电话</th>
                                 <th>家庭住址</th>
+                                <th>操作</th>
 
                             </tr>
                             </thead>
@@ -199,11 +227,11 @@
                         </table>
                         <br/>
                         <div align="right">
-                            <tr>
+                            <!--<tr>
                                 <td><input style="width: 120px; height: 28px;" placeholder="请输入申请者ID" type="text" name="input1"/></td>
                                 <td><input style="height: 28px;" type="button" onclick="onclick12()" value="批准"/></td>
                                 <td><input style="height: 28px;" type="button" onclick="onclick13()" value="拒绝"/></td>
-                            </tr>
+                            </tr>-->
 
                         </div>
 
@@ -211,6 +239,20 @@
                     <!-- /widget-body -->
                 </div>
                 <!-- /widget -->
+            </div>
+
+            <div class="pagelist row">
+                <span class='upper'><a href='javascript: frontPage();'>上一页</a></span>
+                <span class="thisclass"><a>1</a></span>
+                <span class='pageno'><a href='javascript:;'>2</a></span>
+                <span class='pageno'><a href='javascript:;'>3</a></span>
+                <span class='pageno'><a href='javascript:;'>4</a></span>
+                <span class='pageno'><a href='javascript:;'>5</a></span>
+                <span class='pageno'><a href='javascript:;'>6</a></span>
+                <span class='pageno'><a href='javascript:;'>7</a></span>
+                <span class='pageno'><a href='javascript:;'>8</a></span>
+                <span class='pageno'><a href='javascript:;'>9</a></span>
+                <span class='lower'><a href='javascript: nextPage();'>下一页</a></span>
             </div>
 
         </div>

@@ -11,12 +11,16 @@
     <link href="assets/css/font-awesome.min.css" rel="stylesheet">
     <link href="assets/css/alertify.css" rel="stylesheet">
     <link href="assets/css/opp-app.css" rel="stylesheet">
+    <link href="css/dwzj.css" rel="stylesheet">
 
     <link href="assets/css/jquery.dataTables.css" rel="stylesheet">
 
     <script type="text/javascript" src="js/common/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="./layui/layui.all.js"></script>
 
     <script type="text/javascript">
+
+        var page = 1;
 
         window.onload=function(){
 
@@ -41,18 +45,19 @@
                     console.log(data);
                     if(data.rows.length>0){
 
-                        $.each(data.rows,function(index, temp){
+                        /*$.each(data.rows,function(index, temp){*/
+                        for(var i=0;i<data.rows.length;i++){
 
                             $("#outlook").append("<tr>"+
-                                "<td>"+temp.userId+"</td>"+
-                                "<td>"+temp.volunteerName+"</td>"+
-                                "<td>"+temp.volunteerGender+"</td>"+
-                                "<td>"+temp.volunteerAge+"</td>"+
-                                "<td style='color: green'>"+temp.volunteerHealth+"</td>"+
-                                "<td>"+temp.volunteerPhone+"</td>"+
-                                "<td>"+temp.volunteerAddress+"</td>"+
+                                "<td>"+data.rows[i].userId+"</td>"+
+                                "<td>"+data.rows[i].volunteerName+"</td>"+
+                                "<td>"+data.rows[i].volunteerGender+"</td>"+
+                                "<td>"+data.rows[i].volunteerAge+"</td>"+
+                                "<td>"+data.rows[i].volunteerPhone+"</td>"+
+                                "<td>"+data.rows[i].volunteerAddress+"</td>"+
+                                "<td><input type='button' id='"+data.rows[i].userId+"' value='下发任务' onclick='liuyan(this.id)'/></td>"+
                                 "</tr>");
-                        });
+                        }
                     }
 
                 },
@@ -60,6 +65,64 @@
                     alert("请求失败");
                 }
             });
+        }
+
+        function frontPage() {
+            page = page-1;
+
+            if(page<=0){
+                alert("上一页没有数据啦！");
+                page=1;
+            }
+
+            $("#outlook").html("");
+
+            queryPages("page="+page+"&rows=10");
+
+        }
+
+        function nextPage() {
+            page = page+1;
+
+            $("#outlook").html("");
+
+            queryPages("page="+page+"&rows=10");
+
+        }
+
+        function liuyan(userId) {
+
+            layer.open({
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                area: ['420px', '240px'], //宽高
+                content: '<div>&nbsp;<textarea id="text2" name="text1" style="width: 400px; height: 100px;"></textarea><input value="确定" name="'+userId+'" type="button" onclick="beizhu2(this.name)"/></div>'
+
+            });
+        }
+
+        function beizhu2(userId) {
+            var text = $("#text2").val();
+            console.log(text);
+            console.log(userId);
+
+            $.ajax({
+                url:"http://admin.boluo.com/admin/xiafa",
+                dataType:"text",
+                type:"POST",
+                data:{
+                    "userId":userId,
+                    "beizhu":text
+                },
+                success(){
+                    alert("下发任务成功！");
+                },
+                error(){
+                    alert("下发任务失败！");
+                }
+
+            });
+
         }
 
 
@@ -137,9 +200,9 @@
                                 <th>姓名</th>
                                 <th>性别</th>
                                 <th>年龄</th>
-                                <th>身体状况</th>
                                 <th>联系电话</th>
                                 <th>家庭住址</th>
+                                <th>操作</th>
 
                             </tr>
                             </thead>
@@ -158,6 +221,20 @@
                     <!-- /widget-body -->
                 </div>
                 <!-- /widget -->
+            </div>
+
+            <div class="pagelist row">
+                <span class='upper'><a href='javascript: frontPage();'>上一页</a></span>
+                <span class="thisclass"><a>1</a></span>
+                <span class='pageno'><a href='javascript:;'>2</a></span>
+                <span class='pageno'><a href='javascript:;'>3</a></span>
+                <span class='pageno'><a href='javascript:;'>4</a></span>
+                <span class='pageno'><a href='javascript:;'>5</a></span>
+                <span class='pageno'><a href='javascript:;'>6</a></span>
+                <span class='pageno'><a href='javascript:;'>7</a></span>
+                <span class='pageno'><a href='javascript:;'>8</a></span>
+                <span class='pageno'><a href='javascript:;'>9</a></span>
+                <span class='lower'><a href='javascript: nextPage();'>下一页</a></span>
             </div>
 
         </div>
